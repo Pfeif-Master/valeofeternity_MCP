@@ -1,0 +1,3 @@
+[submodule "valeofeternity_cardDB"]
+	path = valeofeternity_cardDB
+	url = git@github.com:Pfeif-Master/valeofeternity_cardDB.git
