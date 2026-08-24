@@ -100,10 +100,18 @@ player passes clockwise, next round begins.
   Denomination matters as much as value: Fire and Water are both worth 3, but selling
   Fire fills 3 of the 4 slots while Water fills 1. Model stones as a multiset of
   denominations, never a single integer.
+- **Value is a property of the denomination, not a fixed constant.** A Permanent effect
+  can override it — Hae-tae makes Blue's value count as Purple's and Purple's count as
+  Blue's, so after it resolves Blue reads as 6 and Purple reads as 3. Any other effect
+  that reads "total value of your X stones" (e.g. Rock Golem) uses the current,
+  possibly-overridden value, never the printed default.
 - Exceeding the cap forces an immediate discard down to 4, chosen by the owner, before
   any other action.
 - Stones are public information at all times. No change on overpay; no exchange between
   denominations except by a specific card effect.
+- **Supply is unlimited for engine purposes.** The physical 42-stone count is a
+  component limit, not a gameplay one — the rulebook says to substitute any other item
+  if it runs out. Discarded excess stones (from exceeding the cap) return to it.
 
 ## Effects: types and resolution
 
@@ -174,11 +182,14 @@ unknown to everyone.
 ## Randomness
 
 Exactly two sources: the initial full-deck shuffle at setup, and reshuffling the
-discard pile into a new draw pile whenever the draw pile empties during a Hunting Phase
-reveal. First-player selection is an external input, not in-engine randomness. For
-reproducible replay, seed once at setup — reshuffle events depend on play (how many
-cards get bought and discarded), not just the seed, so a replay must feed decisions back
-in lockstep with RNG draws.
+discard pile into a new draw pile whenever the draw pile empties — during a Hunting
+Phase reveal, or when a card's "draw a card" effect resolves (Griffon, Sylph, Pegasus,
+Hippogriff, Dandelion Spirit, Willow, Hydra — takes the top card of the draw pile
+straight into hand; same reshuffle-on-empty rule applies). First-player selection is an
+external input, not in-engine randomness. For reproducible replay, seed once at setup —
+reshuffle events depend on play (how many cards get bought and discarded, and how many
+draw effects fire), not just the seed, so a replay must feed decisions back in lockstep
+with RNG draws.
 
 ## End of game and scoring
 
@@ -186,20 +197,3 @@ Checked once, right after the Resolution Phase, before a new round would start: 
 game ends if any player's score is ≥ 60, or round 10 has just completed. Winner is
 highest score; ties break first by most summoned cards (area size), then share the
 victory if still tied. Score never drops below 0.
-
-## Open questions for the engine
-
-- Several card effects say "draw a card" (Griffon, Sylph, Pegasus, Hippogriff,
-  Dandelion Spirit, Willow, Hydra) — moving a card from the draw pile straight to hand.
-  The rulebook never names this as a distinct action, and doesn't say whether it
-  reshuffles-on-empty the same way a Hunting Phase reveal does.
-    - yes reshuffle on empty
-- Stacking/associativity for non-additive Permanent effects (e.g. two different "value
-  of X counts as Y" or "value increased by" modifiers on the same stone) isn't
-  addressed beyond the additive cost-reduction case.
-    - permanents are considered in effect. example value of 3 and 6 stones swapping effect cards that score those stone by value.
-        - the blue stone is now value 6 and the purple stone is now value 3. scoring total value of purple(6) stones is now scoring total value of purple(3) stones.
-- Whether discarded excess stones (over the 4-stone cap) and sold or removed cards
-  return to a shared supply or are simply gone: no card effect reads this, so it's an
-  implementation choice, not a rules gap.
-    - returned to supply. assume unlimited number of stones
