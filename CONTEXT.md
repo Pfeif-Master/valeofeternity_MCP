@@ -34,15 +34,24 @@ _Avoid_: marker (the physical component representing a claim; not a separate con
 
 **Family**:
 One of the five categories printed on every card — Fire, Water, Earth, Wind, or Dragon —
-used for family-scoped counting and targeting effects. Card data's `[family:X:N]`
-bracket token is a misnomer for Stone, not this; see Stone.
+used for family-scoped counting and targeting effects. An extraction bug had scattered
+Stone references across `[family:X]`/`[family:X:N]` bracket tokens throughout the card
+data (not just the compound shape — bare tokens too, wherever context showed a stone
+rather than a card); normalized as of the card-vocabulary QA pass. See Stone.
 _Avoid_: type (ambiguous with Effect Type)
+
+**Effect**:
+One printed instant/permanent/active clause on a card — a type paired with its text.
+Card data models a card's effects as an ordered, non-empty list; today every card has
+exactly one, except 8 cards with two (always pairing Instant with one other type).
+_Avoid_: action, ability
 
 **Stone**:
 A unit of currency in one of three denominations — Red, Blue, Purple — each carrying a
 value (1/3/6 by default) that a Permanent effect can override; other effects reading a
 denomination's "total value" read the current, possibly-overridden value, not the
-printed one.
+printed one. Identity is the color; card data's `[stone:red]`/`[stone:blue]`/
+`[stone:purple]` tokens name it that way, never by value.
 _Avoid_: currency
 
 **Hunting Phase**:
@@ -87,19 +96,22 @@ happens (stones gained, cost paid); Discard itself is just the move.
 
 **Instant**:
 An effect type that resolves once, at the moment its card is Summoned — a precondition
-of the summon succeeding, not just a consequence of it.
-_Avoid_: immediate (the card-data field name for this)
+of the summon succeeding, not just a consequence of it. Card data's `effects[].type`
+uses this name directly.
+_Avoid_: immediate (card data's name for this before the schema normalization)
 
 **Permanent**:
 An effect type that stays continuously active for as long as its card remains in the
-Area.
-_Avoid_: passive (the card-data field name for this)
+Area. Card data's `effects[].type` uses this name directly.
+_Avoid_: passive (card data's name for this before the schema normalization)
 
 **Active**:
 An effect type that fires once per round, during the Resolution Phase, in an order its
-owner chooses among their own Active effects.
-_Avoid_: end_of_round (the card-data field name for this — a misnomer, since Active
-effects resolve during the Resolution Phase, before the round actually ends)
+owner chooses among their own Active effects. Card data's `effects[].type` uses this
+name directly.
+_Avoid_: end_of_round (card data's name for this before the schema normalization — a
+misnomer, since Active effects resolve during the Resolution Phase, before the round
+actually ends)
 
 **Recover**:
 The keyword that moves a summoned card from Area back to Hand; recovers itself if no
