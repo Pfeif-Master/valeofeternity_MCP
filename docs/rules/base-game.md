@@ -16,8 +16,8 @@ after round 10 completes — whichever comes first.
 ## Components
 
 - **70 cards**, five families: Fire (15), Water (15), Earth (15), Wind (15), Dragon (10).
-  Each card has a name, family, summoning cost, and one effect with a type (see
-  Effects below).
+  Each card has a name, family, summoning cost, and one or more effects, each with a
+  type (see Effects below); all but 8 cards have exactly one.
 - **42 magic stones**, three denominations: Red = 1 (×16), Blue = 3 (×14), Purple = 6
   (×12). The supply is a soft cap only — if it runs out, substitute any other item.
 - Per player: a **hand** (secret), an **area** (public; capacity equals the current
@@ -115,14 +115,14 @@ player passes clockwise, next round begins.
 
 ## Effects: types and resolution
 
-| Rulebook name | card-data `type` | Fires |
-|---|---|---|
-| Instant | `immediate` | once, at the moment the card is summoned — part of the summon action itself |
-| Permanent | `passive` | continuously, for as long as the card stays in the area |
-| Active | `end_of_round` | once per round, during the Resolution Phase, activated by the owner |
+A card's `effects` field is an ordered, non-empty list of `{type, text}` — usually one
+entry, occasionally two (an Instant clause plus one other). Each `type` is one of:
 
-`end_of_round` is a misnomer worth flagging: Active effects fire during the Resolution
-Phase, which precedes the end-of-round check — not literally at the end of the round.
+| Type | Fires |
+|---|---|
+| `instant` | once, at the moment the card is summoned — part of the summon action itself |
+| `permanent` | continuously, for as long as the card stays in the area |
+| `active` | once per round, during the Resolution Phase, activated by the owner (not literally at the end of the round, despite the name) |
 
 Resolution rules that apply across all three types:
 
@@ -152,25 +152,21 @@ Resolution rules that apply across all three types:
 
 ## Card text vocabulary
 
-(subject to change as cards db is not finalized)
-
-Card text in `cards/index.json` uses bracket tokens:
+Effect text in `cards/index.json` uses bracket tokens:
 
 - `[points:N]` — fixed point award or loss of N. Bare `[points]`, `[points:?]`, and
   `[points:UNKNOWN]` all mean a variable amount computed at resolution (e.g. "equal to
   its cost") — three spellings of the same thing, an inconsistency in the data rather
   than a rules distinction.
-- `[stone:1]` / `[stone:3]` / `[stone:6]` — a Red / Blue / Purple stone.
+- `[stone:red]` / `[stone:blue]` / `[stone:purple]` — a stone of that color. Named by
+  color, never by value, since a Permanent effect can change what a color's value reads
+  as (see Magic stones above) without changing which stone it is.
 - `[family:fire]` / `water` / `earth` / `wind` / `dragon` — a genuine family reference,
   used when it modifies "card" (targeting or counting cards of that family).
-- `[family:fire:1]`, `[family:water:3]`, `[family:dragon:6]` — **not families**, despite
-  the token shape: these are stones (Red / Blue / Purple respectively). The source data
-  extractor read the colored stone icon as a family icon. Occasionally split into an
-  adjacent pair instead — `[family:fire] [points:1]` means the same thing.
-- `[glyph:immediate]` / `[glyph:end_of_round]` / `[glyph:passive]`, equivalently
-  `[lightning bolt]` / `[hourglass icon]` / `[infinity symbol]` — mark which
-  effect-type clause of a multi-clause card the following text belongs to. Two
-  tokenizations of the same three icons occur across different cards.
+- `[glyph:instant]` / `[glyph:permanent]` / `[glyph:active]` — refers to another card's
+  effect type, for cards whose own effect targets or filters by it (e.g. "recover a card
+  with `[glyph:instant]`"). A card's *own* effect type is the `type` on its own entry in
+  `effects`, never an inline token in its own text.
 
 ## Visibility
 
