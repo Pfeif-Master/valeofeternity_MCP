@@ -510,3 +510,12 @@ handle should take:
 6. **URL-mode elicitation** is itself flagged in-spec as new and unstable: "Its design and
    implementation may change in future protocol revisions"
    ([Elicitation §URL Mode Elicitation Requests](https://modelcontextprotocol.io/specification/2026-07-28/client/elicitation#url-mode-elicitation-requests)).
+
+## Update — 2026-08-24
+
+- Claude Code now defaults (v2.1.232+) to a "v2" client runtime built on MCP TypeScript SDK 2.0,
+  which auto-negotiates protocol revision `2026-07-28` with HTTP and claude.ai-connector servers
+  (stdio servers stay on the older handshake unless `MCP_PROTOCOL_NEGOTIATION=auto` is set). The
+  guidance to assume this repo's concrete host speaks `2025-11-25` or older no longer holds by
+  default for remote servers — verify which runtime a given session is on before relying on either
+  assumption ([code.claude.com/docs/en/mcp](https://code.claude.com/docs/en/mcp)).
